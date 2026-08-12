@@ -101,7 +101,10 @@ public class GameController
 
 # Funkcje animacji CLI
 function Show-Banner {
-    param([string]$statusText = "STANDBY", [ConsoleColor]$statusColor = [ConsoleColor]::Yellow)
+    param(
+        [string]$statusText = "STANDBY", 
+        [System.ConsoleColor]$statusColor = [System.ConsoleColor]::Yellow
+    )
 
     Clear-Host
     $banner = @"
@@ -124,7 +127,7 @@ function Show-Banner {
 
 function Show-IntroAnimation {
     Clear-Host
-    $colors = @([ConsoleColor]::DarkCyan, [ConsoleColor]::Cyan, [ConsoleColor]::Green, [ConsoleColor]::White)
+    $colors = @("DarkCyan", "Cyan", "Green", "White")
     
     foreach ($col in $colors) {
         Show-Banner -statusText "INICJALIZACJA..." -statusColor $col
@@ -146,7 +149,7 @@ $steps = @(
 
 # Start animacji intro
 Show-IntroAnimation
-Show-Banner -statusText "OCZEKIWANIE NA F7" -statusColor [ConsoleColor]::Yellow
+Show-Banner -statusText "OCZEKIWANIE NA F7" -statusColor "Yellow"
 Write-Host " Przejdz do okna gry i wcisnij [F7], aby rozpoczac..." -ForegroundColor Yellow
 
 $isPaused = $true
@@ -177,7 +180,7 @@ try {
                 $isMouseDown = $true
                 $mouseStateStartTime = [System.DateTime]::Now
 
-                Show-Banner -statusText "BOT AKTYWNY (DZIALA)" -statusColor [ConsoleColor]::Green
+                Show-Banner -statusText "BOT AKTYWNY (DZIALA)" -statusColor "Green"
                 Start-Sleep -Milliseconds 300 # Debounce
             }
         }
@@ -188,7 +191,7 @@ try {
                 [GameController]::ReleaseAll()
                 $totalActiveTime += ([System.DateTime]::Now - $lastActiveStart)
 
-                Show-Banner -statusText "PAUZA (WSTRZYMANY)" -statusColor [ConsoleColor]::Red
+                Show-Banner -statusText "PAUZA (WSTRZYMANY)" -statusColor "Red"
                 Write-Host " [PAUZA] Wcisnij [F7], aby wznowic ruch..." -ForegroundColor Yellow
                 Start-Sleep -Milliseconds 300 # Debounce
             }
@@ -231,8 +234,8 @@ try {
             $spinner = $spinnerFrames[$spinnerIndex]
             $spinnerIndex = ($spinnerIndex + 1) % $spinnerFrames.Count
 
-            $lpmStatus = if ($isMouseDown) { "LPM: [WCIŚNIĘTY ]" } else { "LPM: [PUSZCZONY ]" }
-            $lpmColor = if ($isMouseDown) { [ConsoleColor]::Green } else { [ConsoleColor]::DarkGray }
+            $lpmStatus = if ($isMouseDown) { "LPM: [WCISNIETY ]" } else { "LPM: [PUSZCZONY ]" }
+            $lpmColor = if ($isMouseDown) { "Green" } else { "DarkGray" }
 
             $timeStr = ($totalActiveTime + ($now - $lastActiveStart)).ToString("mm\:ss")
 
@@ -244,7 +247,7 @@ try {
             Write-Host " | " -NoNewline -ForegroundColor DarkGray
             Write-Host $lpmStatus -NoNewline -ForegroundColor $lpmColor
             Write-Host " | " -NoNewline -ForegroundColor DarkGray
-            Write-Host "CZAS: $timeStr  " -ForegroundColor Memory
+            Write-Host "CZAS: $timeStr  " -ForegroundColor Gray
 
             Start-Sleep -Milliseconds 80
         }
