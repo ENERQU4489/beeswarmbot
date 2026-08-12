@@ -4,14 +4,13 @@ Skrypt służący do automatycznego testowania wykrywania prostych botów / sztu
 
 ## Opis działania
 
-Skrypt emuluje ruch postaci po obwodzie prostokąta, używając sprzetowych kodów skanowania **DirectInput (Hardware Scancodes)**, dzięki czemu działa w silnikach takich jak Unity czy Unreal Engine.
+Skrypt emuluje ruch postaci po obwodzie prostokąta, używając sprzętowych kodów skanowania **DirectInput (Hardware Scancodes)**, dzięki czemu działa w silnikach takich jak Unity czy Unreal Engine.
 
-### Wzorzec ruchu:
-1. **Przód (`W`)**: 2 sekundy
-2. **Prawo (`D`)**: 1 sekunda
-3. **Tył (`S`)**: 2 sekundy
-4. **Lewo (`A`)**: 1 sekunda
-5. Powtarzanie w pętli.
+### Wzorzec ruchu w pętli:
+1. **`D`**: 2 sekundy
+2. **`W`**: 1 sekunda
+3. **`A`**: 2 sekundy
+4. **`S`**: 1 sekunda
 
 ## Jak uruchomić?
 

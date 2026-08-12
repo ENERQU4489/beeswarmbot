@@ -104,31 +104,32 @@ for ($i = 5; $i -gt 0; $i--) {
 Write-Host "`n[START] Ruch rozpoczety!" -ForegroundColor Green
 Write-Host "Wcisnij [F8] w dowolnym momencie, aby natychmiast ZATRZYMAC skrypt." -ForegroundColor Red
 
+# Nowy wzorzec: D (2s) -> W (1s) -> A (2s) -> S (1s)
 $cancelled = $false
 
 try {
     while (-not $cancelled) {
-        # 1. Przod - 2 sekundy
-        Write-Host "--> Przod (2s)" -ForegroundColor Gray
-        $cancelled = Hold-KeyWithCancel -vk ([GameController]::VK_W) -scan ([GameController]::SCAN_W) -seconds 2.0
+        # 1. Klawisz D - 2 sekundy
+        Write-Host "--> Klawisz D (2s)" -ForegroundColor Gray
+        $cancelled = Hold-KeyWithCancel -vk ([GameController]::VK_D) -scan ([GameController]::SCAN_D) -seconds 2.0
         if ($cancelled) { break }
         Start-Sleep -Milliseconds 100
 
-        # 2. Prawo - 1 sekunda
-        Write-Host "--> Prawo (1s)" -ForegroundColor Gray
-        $cancelled = Hold-KeyWithCancel -vk ([GameController]::VK_D) -scan ([GameController]::SCAN_D) -seconds 1.0
+        # 2. Klawisz W - 1 sekunda
+        Write-Host "--> Klawisz W (1s)" -ForegroundColor Gray
+        $cancelled = Hold-KeyWithCancel -vk ([GameController]::VK_W) -scan ([GameController]::SCAN_W) -seconds 1.0
         if ($cancelled) { break }
         Start-Sleep -Milliseconds 100
 
-        # 3. Tyl - 2 sekundy
-        Write-Host "--> Tyl (2s)" -ForegroundColor Gray
-        $cancelled = Hold-KeyWithCancel -vk ([GameController]::VK_S) -scan ([GameController]::SCAN_S) -seconds 2.0
+        # 3. Klawisz A - 2 sekundy
+        Write-Host "--> Klawisz A (2s)" -ForegroundColor Gray
+        $cancelled = Hold-KeyWithCancel -vk ([GameController]::VK_A) -scan ([GameController]::SCAN_A) -seconds 2.0
         if ($cancelled) { break }
         Start-Sleep -Milliseconds 100
 
-        # 4. Lewo - 1 sekunda
-        Write-Host "--> Lewo (1s)" -ForegroundColor Gray
-        $cancelled = Hold-KeyWithCancel -vk ([GameController]::VK_A) -scan ([GameController]::SCAN_A) -seconds 1.0
+        # 4. Klawisz S - 1 sekunda
+        Write-Host "--> Klawisz S (1s)" -ForegroundColor Gray
+        $cancelled = Hold-KeyWithCancel -vk ([GameController]::VK_S) -scan ([GameController]::SCAN_S) -seconds 1.0
         if ($cancelled) { break }
         Start-Sleep -Milliseconds 100
     }
