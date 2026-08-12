@@ -20,7 +20,7 @@ exit /b
 # KOD POWERSHELL + C# (Ready-To-Run)
 # ==============================================================================
 
-# Kompilacja C# do niskopoziomowej obslugi klawiatury i myszy (Scancodes dla DirectInput)
+# Kompilacja C# do niskopoziomowej obslugi klawiatury (Scancodes dla DirectInput)
 Add-Type -TypeDefinition @"
 using System;
 using System.Runtime.InteropServices;
@@ -30,9 +30,6 @@ public class GameController
 {
     [DllImport("user32.dll")]
     public static extern void keybd_event(byte bVk, byte bScan, uint dwFlags, UIntPtr dwExtraInfo);
-
-    [DllImport("user32.dll")]
-    public static extern void mouse_event(uint dwFlags, int dx, int dy, uint dwData, UIntPtr dwExtraInfo);
 
     [DllImport("user32.dll")]
     public static extern short GetAsyncKeyState(int vKey);
@@ -70,7 +67,7 @@ public class GameController
 }
 "@
 
-# Funkcja pomocnicza trzymajaca klawisz z mozliwoscia przerwania klawiszem F8
+# Funkcja pomocnicza trzymujaca klawisz z mozliwoscia przerwania klawiszem F8
 function Hold-KeyWithCancel {
     param(
         [byte]$vk,
@@ -113,25 +110,25 @@ try {
     while (-not $cancelled) {
         # 1. Przod - 2 sekundy
         Write-Host "--> Przod (2s)" -ForegroundColor Gray
-        $cancelled = Hold-KeyWithCancel -vk [GameController]::VK_W -scan [GameController]::SCAN_W -seconds 2.0
+        $cancelled = Hold-KeyWithCancel -vk ([GameController]::VK_W) -scan ([GameController]::SCAN_W) -seconds 2.0
         if ($cancelled) { break }
         Start-Sleep -Milliseconds 100
 
         # 2. Prawo - 1 sekunda
         Write-Host "--> Prawo (1s)" -ForegroundColor Gray
-        $cancelled = Hold-KeyWithCancel -vk [GameController]::VK_D -scan [GameController]::SCAN_D -seconds 1.0
+        $cancelled = Hold-KeyWithCancel -vk ([GameController]::VK_D) -scan ([GameController]::SCAN_D) -seconds 1.0
         if ($cancelled) { break }
         Start-Sleep -Milliseconds 100
 
         # 3. Tyl - 2 sekundy
         Write-Host "--> Tyl (2s)" -ForegroundColor Gray
-        $cancelled = Hold-KeyWithCancel -vk [GameController]::VK_S -scan [GameController]::SCAN_S -seconds 2.0
+        $cancelled = Hold-KeyWithCancel -vk ([GameController]::VK_S) -scan ([GameController]::SCAN_S) -seconds 2.0
         if ($cancelled) { break }
         Start-Sleep -Milliseconds 100
 
         # 4. Lewo - 1 sekunda
         Write-Host "--> Lewo (1s)" -ForegroundColor Gray
-        $cancelled = Hold-KeyWithCancel -vk [GameController]::VK_A -scan [GameController]::SCAN_A -seconds 1.0
+        $cancelled = Hold-KeyWithCancel -vk ([GameController]::VK_A) -scan ([GameController]::SCAN_A) -seconds 1.0
         if ($cancelled) { break }
         Start-Sleep -Milliseconds 100
     }
