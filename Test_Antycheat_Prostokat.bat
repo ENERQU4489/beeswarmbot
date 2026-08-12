@@ -99,11 +99,11 @@ public class GameController
 }
 "@
 
-# Funkcje animacji CLI
+# Wyczyszczona funkcja banera (bez sparametryzowanych typow kolorow, zero bledow konwersji)
 function Show-Banner {
     param(
-        [string]$statusText = "STANDBY", 
-        [System.ConsoleColor]$statusColor = [System.ConsoleColor]::Yellow
+        $statusText = "STANDBY", 
+        $statusColor = "Yellow"
     )
 
     Clear-Host
