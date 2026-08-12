@@ -1,6 +1,6 @@
 <# :
 @echo off
-title Test Antycheata - Ruch po prostokacie + Auto-Clicker
+title Test Antycheata - Made by 4489
 color 0A
 :: Sprawdzenie i automatyczne podniesienie uprawnien do Administratora
 net session >nul 2>&1
@@ -17,8 +17,10 @@ exit /b
 #>
 
 # ==============================================================================
-# KOD POWERSHELL + C# (Ready-To-Run)
+# KOD POWERSHELL + C# (Ready-To-Run) - MADE BY 4489
 # ==============================================================================
+
+[Console]::OutputEncoding = [System.Text.Encoding]::UTF8
 
 # Kompilacja C# do niskopoziomowej obslugi klawiatury i myszy (DirectInput / Scancodes)
 Add-Type -TypeDefinition @"
@@ -97,34 +99,64 @@ public class GameController
 }
 "@
 
-Clear-Host
-Write-Host "==========================================================" -ForegroundColor Cyan
-Write-Host "   TEST ANTYCHEATA - RUCH + AUTO-CLICKER (FPP / 3D)       " -ForegroundColor Cyan
-Write-Host "==========================================================" -ForegroundColor Cyan
-Write-Host " Wzorzec ruchu:  D (2s) -> W (1s) -> A (2s) -> S (1s)" -ForegroundColor Yellow
-Write-Host " Myszka:         Klik trzymany 1s, puszczony 0.5s" -ForegroundColor Yellow
-Write-Host "----------------------------------------------------------" -ForegroundColor Gray
-Write-Host " [F7] -> START / WZNOWIENIE skryptu" -ForegroundColor Green
-Write-Host " [F8] -> PAUZA / ZATRZYMANIE skryptu" -ForegroundColor Red
-Write-Host "==========================================================" -ForegroundColor Cyan
-Write-Host "`nOczekiwanie na wcisniecie [F7]..." -ForegroundColor Yellow
+# Funkcje animacji CLI
+function Show-Banner {
+    param([string]$statusText = "STANDBY", [ConsoleColor]$statusColor = [ConsoleColor]::Yellow)
 
-$isPaused = $true
+    Clear-Host
+    $banner = @"
+  __  __    _    ____  _____   ______   __  _  _  _  _  ___   ___ 
+ |  \/  |  / \  |  _ \|  ___| |  _ \ \ / / | || || || _ \ / _ \
+ | |\/| | / _ \ | | | |  __|  | |_) \ V /  | || || ||   /| (_) |
+ | |  | |/ ___ \| |_| | |___  |  _ < | |   |__   _||_"\  \__, |
+ |_|  |_/_/   \_\____/|_____| |_| \_\|_|      |_|  |___|  /_/  
+"@
+    Write-Host $banner -ForegroundColor Cyan
+    Write-Host " ==============================================================" -ForegroundColor DarkGray
+    Write-Host "   ANTI-CHEAT TEST BOT | FPP & 3D BOT SIMULATOR" -ForegroundColor Gray
+    Write-Host "   STATUS: " -NoNewline -ForegroundColor White
+    Write-Host " [$statusText] " -ForegroundColor $statusColor
+    Write-Host " ==============================================================" -ForegroundColor DarkGray
+    Write-Host "  [F7] -> START / WZNOWIENIE   |   [F8] -> PAUZA / STOP" -ForegroundColor Green
+    Write-Host " ==============================================================" -ForegroundColor DarkGray
+    Write-Host ""
+}
 
-# Definicje krokow ruchu
+function Show-IntroAnimation {
+    Clear-Host
+    $colors = @([ConsoleColor]::DarkCyan, [ConsoleColor]::Cyan, [ConsoleColor]::Green, [ConsoleColor]::White)
+    
+    foreach ($col in $colors) {
+        Show-Banner -statusText "INICJALIZACJA..." -statusColor $col
+        Start-Sleep -Milliseconds 120
+    }
+}
+
+# Animowane symbole spinnera
+$spinnerFrames = @("⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏")
+$spinnerIndex = 0
+
+# Sekwencja krokow ruchu
 $steps = @(
-    @{ Name = "D (2s)"; Vk = [GameController]::VK_D; Scan = [GameController]::SCAN_D; Duration = 2.0 },
-    @{ Name = "W (1s)"; Vk = [GameController]::VK_W; Scan = [GameController]::SCAN_W; Duration = 1.0 },
-    @{ Name = "A (2s)"; Vk = [GameController]::VK_A; Scan = [GameController]::SCAN_A; Duration = 2.0 },
-    @{ Name = "S (1s)"; Vk = [GameController]::VK_S; Scan = [GameController]::SCAN_S; Duration = 1.0 }
+    @{ Name = "RUCH W PRAWO (D)"; Vk = [GameController]::VK_D; Scan = [GameController]::SCAN_D; Duration = 2.0 },
+    @{ Name = "RUCH W PRZOD (W)"; Vk = [GameController]::VK_W; Scan = [GameController]::SCAN_W; Duration = 1.0 },
+    @{ Name = "RUCH W LEWO  (A)"; Vk = [GameController]::VK_A; Scan = [GameController]::SCAN_A; Duration = 2.0 },
+    @{ Name = "RUCH W TYL   (S)"; Vk = [GameController]::VK_S; Scan = [GameController]::SCAN_S; Duration = 1.0 }
 )
 
+# Start animacji intro
+Show-IntroAnimation
+Show-Banner -statusText "OCZEKIWANIE NA F7" -statusColor [ConsoleColor]::Yellow
+Write-Host " Przejdz do okna gry i wcisnij [F7], aby rozpoczac..." -ForegroundColor Yellow
+
+$isPaused = $true
 $currentStepIndex = 0
 $moveStepStartTime = [System.DateTime]::Now
 
-# Stan myszki: $true = wcisnieta, $false = puszczona
 $isMouseDown = $false
 $mouseStateStartTime = [System.DateTime]::Now
+$totalActiveTime = [System.TimeSpan]::Zero
+$lastActiveStart = [System.DateTime]::Now
 
 try {
     while ($true) {
@@ -132,25 +164,21 @@ try {
         if ([GameController]::IsF7Pressed()) {
             if ($isPaused) {
                 $isPaused = $false
-                Clear-Host
-                Write-Host "==========================================================" -ForegroundColor Cyan
-                Write-Host "   [AKTYWNY] Skrypt wykonuje ruch i cykliczne klikanie!   " -ForegroundColor Green
-                Write-Host "   Wcisnij [F8], aby PAUZOWAC skrypt.                      " -ForegroundColor Red
-                Write-Host "==========================================================" -ForegroundColor Cyan
+                $lastActiveStart = [System.DateTime]::Now
                 
                 # Inicjalizacja pierwszego kroku
                 $currentStepIndex = 0
                 $step = $steps[$currentStepIndex]
                 [GameController]::KeyDown([byte]$step.Vk, [byte]$step.Scan)
                 $moveStepStartTime = [System.DateTime]::Now
-                Write-Host "--> Ruch: $($step.Name)" -ForegroundColor Gray
 
                 # Inicjalizacja myszki (wcisniecie)
                 [GameController]::MouseDown()
                 $isMouseDown = $true
                 $mouseStateStartTime = [System.DateTime]::Now
 
-                Start-Sleep -Milliseconds 300 # Debounce F7
+                Show-Banner -statusText "BOT AKTYWNY (DZIALA)" -statusColor [ConsoleColor]::Green
+                Start-Sleep -Milliseconds 300 # Debounce
             }
         }
 
@@ -158,16 +186,19 @@ try {
             if (-not $isPaused) {
                 $isPaused = $true
                 [GameController]::ReleaseAll()
-                Write-Host "`n[PAUZA] Zatrzymano ruch i klikanie. Wcisnij [F7], aby wznowic." -ForegroundColor Yellow
-                Start-Sleep -Milliseconds 300 # Debounce F8
+                $totalActiveTime += ([System.DateTime]::Now - $lastActiveStart)
+
+                Show-Banner -statusText "PAUZA (WSTRZYMANY)" -statusColor [ConsoleColor]::Red
+                Write-Host " [PAUZA] Wcisnij [F7], aby wznowic ruch..." -ForegroundColor Yellow
+                Start-Sleep -Milliseconds 300 # Debounce
             }
         }
 
-        # --- LOGIKA WYKONANIA RUCHU I KLIKANIA (GDY AKTYWNY) ---
+        # --- WYKONANIE I DYNAMICZNA ANIMACJA DASHBOARDU ---
         if (-not $isPaused) {
             $now = [System.DateTime]::Now
 
-            # 1. Logika cyklicznego klikania myszka (1s wcisnieta, 0.5s puszczona)
+            # 1. Logika klikania myszka (1s wcisnieta / 0.5s puszczona)
             $mouseElapsed = ($now - $mouseStateStartTime).TotalSeconds
             if ($isMouseDown -and $mouseElapsed -ge 1.0) {
                 [GameController]::MouseUp()
@@ -180,29 +211,49 @@ try {
                 $mouseStateStartTime = $now
             }
 
-            # 2. Logika sekwencji ruchu postaci
+            # 2. Logika sekwencji ruchu
             $moveElapsed = ($now - $moveStepStartTime).TotalSeconds
             $currentStep = $steps[$currentStepIndex]
 
             if ($moveElapsed -ge $currentStep.Duration) {
-                # Pusc stary klawisz
                 [GameController]::KeyUp([byte]$currentStep.Vk, [byte]$currentStep.Scan)
 
-                # Przejdz do nastepnego kroku
                 $currentStepIndex = ($currentStepIndex + 1) % $steps.Count
                 $nextStep = $steps[$currentStepIndex]
 
-                # Wcisnij nowy klawisz
                 [GameController]::KeyDown([byte]$nextStep.Vk, [byte]$nextStep.Scan)
                 $moveStepStartTime = $now
-                Write-Host "--> Ruch: $($nextStep.Name)" -ForegroundColor Gray
+                $currentStep = $nextStep
+                $moveElapsed = 0.0
             }
-        }
 
-        Start-Sleep -Milliseconds 20
+            # 3. Odswiezanie animowanego interfejsu CLI
+            $spinner = $spinnerFrames[$spinnerIndex]
+            $spinnerIndex = ($spinnerIndex + 1) % $spinnerFrames.Count
+
+            $lpmStatus = if ($isMouseDown) { "LPM: [WCIŚNIĘTY ]" } else { "LPM: [PUSZCZONY ]" }
+            $lpmColor = if ($isMouseDown) { [ConsoleColor]::Green } else { [ConsoleColor]::DarkGray }
+
+            $timeStr = ($totalActiveTime + ($now - $lastActiveStart)).ToString("mm\:ss")
+
+            # Nadpisywanie linii w konsoli (efekt zywej animacji)
+            [Console]::SetCursorPosition(0, 10)
+            Write-Host "  $spinner " -NoNewline -ForegroundColor Cyan
+            Write-Host "AKTUALNY RUCH: " -NoNewline -ForegroundColor White
+            Write-Host ("{0,-20}" -f $currentStep.Name) -NoNewline -ForegroundColor Yellow
+            Write-Host " | " -NoNewline -ForegroundColor DarkGray
+            Write-Host $lpmStatus -NoNewline -ForegroundColor $lpmColor
+            Write-Host " | " -NoNewline -ForegroundColor DarkGray
+            Write-Host "CZAS: $timeStr  " -ForegroundColor Memory
+
+            Start-Sleep -Milliseconds 80
+        }
+        else {
+            Start-Sleep -Milliseconds 50
+        }
     }
 }
 finally {
     [GameController]::ReleaseAll()
-    Write-Host "`n[STOP] Skrypt zakonczony, zwolniono przyciski." -ForegroundColor Green
+    Write-Host "`n [STOP] Zwolniono klawisze. Do widzenia!" -ForegroundColor Red
 }
